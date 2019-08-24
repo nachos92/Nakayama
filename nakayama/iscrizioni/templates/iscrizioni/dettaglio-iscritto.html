@@ -1,0 +1,16 @@
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+<!--TODO: Fare il template base in modo da non importare bootstrap tutte le volte -->
+{% if iscritto %}
+    <div class="row">
+        <div class="col">
+            {{iscritto.persona.cognome}}
+        </div>
+        <div class="col">
+            {{iscritto.persona.nome}}
+        </div>
+    </div>
+
+{% else %}
+    <p>Non ci sono iscritti.</p>
+{% endif %}
