@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
-from .models import IscrittoBase, Iscrizione
+from .models import Iscrizione
 import datetime
 import logging
 from . import utils
