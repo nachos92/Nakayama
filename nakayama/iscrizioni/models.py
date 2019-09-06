@@ -14,6 +14,8 @@ class Tesserato(models.Model):
 	codice_fiscale = models.CharField(max_length=16, default='')
 	email = models.EmailField(blank=True)
 
+	foto_tessera = models.ImageField(blank=True)
+
 	class Meta:
 		verbose_name = "Tesserato"
 		verbose_name_plural = "Tesserati"
