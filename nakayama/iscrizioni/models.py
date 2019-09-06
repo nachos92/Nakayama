@@ -14,7 +14,7 @@ class Tesserato(models.Model):
 	codice_fiscale = models.CharField(max_length=16, default='')
 	email = models.EmailField(blank=True)
 
-	foto_tessera = models.ImageField(blank=True)
+	foto_tessera = models.ImageField(blank=True, verbose_name='Fototessera')
 
 	class Meta:
 		verbose_name = "Tesserato"
@@ -42,13 +42,8 @@ class Iscrizione(models.Model):
 	flag_karate = models.BooleanField(default=False, verbose_name="Karate")
 	flag_corsi = models.BooleanField(default=False, verbose_name="Corsi")
 
-	class Meta:
-		verbose_name = "Iscrizione"
-		verbose_name_plural = "Iscrizioni"
-
-	def clean(self):
-		if not (self.flag_corsi or self.flag_fitness or self.flag_karate):
-			raise ValidationError("Selezionare attività")
+	modulo_da_firmare = models.FileField(blank=True, help_text="Stampare e fare firmare")
+	modulo_firmato = models.FileField(blank=True)
 
 	def __str__(self):
 		return "{0} {1} - {2}".format(
@@ -56,3 +51,15 @@ class Iscrizione(models.Model):
 			self.iscritto.nome,
 			self.anno_iscrizione
 		)
+
+	class Meta:
+		verbose_name = "Iscrizione"
+		verbose_name_plural = "Iscrizioni"
+		unique_together = ('iscritto',)
+
+	def clean(self):
+		if not (self.flag_corsi or self.flag_fitness or self.flag_karate):
+			raise ValidationError("Selezionare attività")
+
+	def has_certificato_medico(self):
+		return False if not self.certificato_medico else True

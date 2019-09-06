@@ -126,3 +126,14 @@ STATIC_URL = '/static/'
 
 # Per la 'produzione'
 # STATIC_ROOT = '/home/nachos92/Nakayama/nakayama/static'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]
+
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_URL = '/media/'   # Locale
+# MEDIA_URL = '/home/nachos92/Nakayama/nakayama/media'   # Rete
+
+
