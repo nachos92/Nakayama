@@ -1,0 +1,4 @@
+Django==2.1.11
+mysql-connector-python==8.0.17
+mysqlclient==1.4.4
+pytz==2019.2
