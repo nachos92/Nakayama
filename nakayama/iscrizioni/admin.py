@@ -1,6 +1,8 @@
 from django.contrib import admin
-from django.contrib.auth import models
+from django.db.models import CharField
 from django.contrib.auth import models as auth_models
+from django.forms import TextInput, Textarea
+
 
 from . import models
 
@@ -62,11 +64,11 @@ class IscrizioneAdmin(admin.ModelAdmin):
 	autocomplete_fields = ['iscritto']
 	search_fields = ['iscritto__nome', 'iscritto__cognome']
 	list_display = [
-		'id',
+		# 'id',
 		'iscritto',
-		'certificato_medico_salvato',
 		'anno_iscrizione',
-		'data_iscrizione',
+		'scadenza_certificato_medico',
+		# 'data_iscrizione',
 		'flag_karate',
 		'flag_fitness',
 		'flag_corsi',
@@ -74,31 +76,30 @@ class IscrizioneAdmin(admin.ModelAdmin):
 
 	list_filter = [
 		'anno_iscrizione',
-		null_filter('certificato_medico'),
-		'flag_karate',
-		'flag_corsi',
-		'flag_fitness'
+		# 'flag_karate',
+		# 'flag_corsi',
+		# 'flag_fitness'
 	]
 
-	sortable_by = ['anno_iscrizione', 'iscritto', 'data_iscrizione', 'certificato_medico_salvato']
+	sortable_by = ['anno_iscrizione', 'iscritto', 'data_iscrizione', 'scadenza_certificato_medico']
 	fieldsets = (
 			(
 				None, {
-					'fields': ('iscritto', 'data_iscrizione', 'certificato_medico')
+					'fields': ('iscritto', 'data_iscrizione', 'scadenza_certificato_medico')
 				}
 			),
 			(
-				'Attività', {
+				'Attivita', {
 					'fields': (
-						('flag_karate', 'flag_fitness', 'flag_corsi'),
-						'note'
+						# ('flag_karate', 'flag_fitness', 'flag_corsi'),
+						'note',
 					)
 				}
 			),
 			(
 				'Modulistica', {
 					'fields': (
-						('modulo_da_firmare', 'modulo_firmato',),
+						('modulo_da_firmare',),
 					)
 				}
 			)
@@ -110,8 +111,40 @@ class IscrizioneAdmin(admin.ModelAdmin):
 	certificato_medico_salvato.boolean = True
 
 
+class IscrizioneKarateAdmin(IscrizioneAdmin):
+	formfield_overrides = {
+		CharField: {'widget': TextInput(attrs={'size': '25%'})},
+	}
+
+	fieldsets = (
+		(
+			None, {
+				'fields': ('iscritto', 'data_iscrizione', 'scadenza_certificato_medico')
+			}
+		),
+		(
+			'Cinture', {
+				'fields': (
+					('cintura_bianca', 'cintura_blu', 'cintura_3_dan',),
+					('cintura_gialla', 'cintura_marrone', 'cintura_4_dan',),
+					('cintura_arancio', 'cintura_1_dan', 'cintura_5_dan',),
+					('cintura_verde', 'cintura_2_dan', 'cintura_6_dan',),
+				)
+			}
+		),
+		(
+			'Altro', {
+				'fields': (
+					('note', 'modulo_da_firmare',),
+				)
+			}
+		)
+	)
+
+
 admin.site.register(models.Tesserato, TesseratoAdmin)
-admin.site.register(models.Iscrizione, IscrizioneAdmin)
+admin.site.register(models.IscrizioneKarate, IscrizioneKarateAdmin)
+admin.site.register(models.IscrizioneFitness, IscrizioneAdmin)
 
 admin.site.unregister(auth_models.Group)
 admin.site.unregister(auth_models.User)
