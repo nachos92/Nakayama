@@ -56,7 +56,8 @@ class TesseratoAdmin(admin.ModelAdmin):
 	search_fields = ['nome', 'cognome']
 	# fields = ('nome', 'cognome',)
 	list_filter = [
-		null_filter('foto_tessera')
+		# null_filter('foto_tessera')
+		# 'residenza',
 	]
 
 
@@ -140,6 +141,12 @@ class IscrizioneKarateAdmin(IscrizioneAdmin):
 			}
 		)
 	)
+
+	def save_model(self, request, obj, form, change):
+		super(IscrizioneKarateAdmin, self).save_model(request, obj, form, change)
+		#todo genero il pdf
+		obj.note = '666'
+		obj.save()
 
 
 admin.site.register(models.Tesserato, TesseratoAdmin)
