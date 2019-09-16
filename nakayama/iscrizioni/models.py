@@ -43,7 +43,7 @@ class Iscrizione(models.Model):
 	# id = models.AutoField(primary_key=True)
 	iscritto = models.ForeignKey(Tesserato, on_delete=models.CASCADE)
 	data_iscrizione = models.DateField(default=django_now)
-
+	scadenza_iscrizione = models.DateField(blank=False, default=django_now)
 	anno_iscrizione = models.CharField(max_length=9, default=utils.get_anno_scolastico())
 
 	scadenza_certificato_medico = models.DateField(default=django_now)
@@ -58,8 +58,8 @@ class Iscrizione(models.Model):
 
 	def __str__(self):
 		return "{0} {1} - {2}".format(
-			self.iscritto.cognome,
-			self.iscritto.nome,
+			self.iscritto.cognome.upper(),
+			self.iscritto.nome.upper(),
 			self.anno_iscrizione
 		)
 

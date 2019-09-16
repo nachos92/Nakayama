@@ -28,10 +28,6 @@ class StartNullListFilter(NullListFilter):
 	parameter_name = u'started'
 
 
-class SomeModelAdmin(admin.ModelAdmin):
-	list_filter = (StartNullListFilter, )
-
-
 def null_filter(field, title_=None):
 	""" Per poter aggiungere il filtro per vedere se un campo e' valorizzato o meno
 
@@ -65,11 +61,10 @@ class IscrizioneAdmin(admin.ModelAdmin):
 	autocomplete_fields = ['iscritto']
 	search_fields = ['iscritto__nome', 'iscritto__cognome']
 	list_display = [
-		# 'id',
 		'iscritto',
 		'anno_iscrizione',
+		'scadenza_iscrizione',
 		'scadenza_certificato_medico',
-		# 'data_iscrizione',
 		'flag_karate',
 		'flag_fitness',
 		'flag_corsi',
@@ -77,34 +72,25 @@ class IscrizioneAdmin(admin.ModelAdmin):
 
 	list_filter = [
 		'anno_iscrizione',
-		# 'flag_karate',
-		# 'flag_corsi',
-		# 'flag_fitness'
 	]
 
-	sortable_by = ['anno_iscrizione', 'iscritto', 'data_iscrizione', 'scadenza_certificato_medico']
+	sortable_by = [
+		'iscritto',
+		'anno_iscrizione',
+		'data_iscrizione',
+		'scadenza_iscrizione',
+		'scadenza_certificato_medico'
+	]
 	fieldsets = (
 			(
 				None, {
-					'fields': ('iscritto', 'data_iscrizione', 'scadenza_certificato_medico')
-				}
-			),
-			(
-				'Attivita', {
 					'fields': (
-						# ('flag_karate', 'flag_fitness', 'flag_corsi'),
-						'note',
+						'iscritto',
+						('data_iscrizione', 'scadenza_iscrizione',),
+						'scadenza_certificato_medico'
 					)
 				}
 			),
-			(
-				'Modulistica', {
-					'fields': (
-						('modulo_da_firmare',),
-					)
-				}
-			)
-
 	)
 
 	def certificato_medico_salvato(self, obj):
@@ -117,12 +103,7 @@ class IscrizioneKarateAdmin(IscrizioneAdmin):
 		CharField: {'widget': TextInput(attrs={'size': '25%'})},
 	}
 
-	fieldsets = (
-		(
-			None, {
-				'fields': ('iscritto', 'data_iscrizione', 'scadenza_certificato_medico')
-			}
-		),
+	fieldsets = IscrizioneAdmin.fieldsets + (
 		(
 			'Cinture', {
 				'fields': (
@@ -139,14 +120,14 @@ class IscrizioneKarateAdmin(IscrizioneAdmin):
 					('note', 'modulo_da_firmare',),
 				)
 			}
-		)
+		),
 	)
+
 
 	def save_model(self, request, obj, form, change):
 		super(IscrizioneKarateAdmin, self).save_model(request, obj, form, change)
-		#todo genero il pdf
-		obj.note = '666'
-		obj.save()
+
+		obj.genera_pdf_compilato()
 
 
 admin.site.register(models.Tesserato, TesseratoAdmin)
@@ -156,7 +137,7 @@ admin.site.register(models.IscrizioneFitness, IscrizioneAdmin)
 admin.site.unregister(auth_models.Group)
 admin.site.unregister(auth_models.User)
 
-admin.site.site_header = ("Palestra Nakayama")
-admin.site.site_title = ("Nakayama")
-admin.site.index_title = ("Gestione iscrizioni")
+admin.site.site_header = "Palestra Nakayama"
+admin.site.site_title = "Nakayama"
+admin.site.index_title = "Gestione iscrizioni"
 
