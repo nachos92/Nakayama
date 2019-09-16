@@ -2,6 +2,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.timezone import now as django_now
 from django.contrib import admin
+from .docs import fill_pdf
 
 from . import utils
 
@@ -80,6 +81,9 @@ class Iscrizione(models.Model):
 	def has_certificato_medico(self):
 		test = self.scadenza_certificato_medico < utils.get_current_date()
 		return test
+
+	def genera_pdf_compilato(self):
+		fill_pdf.popola_doc()
 
 
 class IscrizioneKarate(Iscrizione):

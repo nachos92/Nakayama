@@ -97,6 +97,10 @@ class IscrizioneAdmin(admin.ModelAdmin):
 		return obj.has_certificato_medico()
 	certificato_medico_salvato.boolean = True
 
+	def save_model(self, request, obj, form, change):
+
+		obj.genera_pdf_compilato()
+
 
 class IscrizioneKarateAdmin(IscrizioneAdmin):
 	formfield_overrides = {
@@ -123,11 +127,10 @@ class IscrizioneKarateAdmin(IscrizioneAdmin):
 		),
 	)
 
-
-	def save_model(self, request, obj, form, change):
-		super(IscrizioneKarateAdmin, self).save_model(request, obj, form, change)
-
-		obj.genera_pdf_compilato()
+	# def save_model(self, request, obj, form, change):
+	# 	super(IscrizioneKarateAdmin, self).save_model(request, obj, form, change)
+	#
+	# 	obj.genera_pdf_compilato()
 
 
 admin.site.register(models.Tesserato, TesseratoAdmin)
