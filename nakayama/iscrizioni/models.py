@@ -12,7 +12,7 @@ class Tesserato(models.Model):
 	nome = models.CharField(max_length=30, default='')
 	cognome = models.CharField(max_length=30, default='')
 
-	foto_tessera = models.ImageField(blank=True, verbose_name='Fototessera')
+	foto_tessera = models.ImageField(blank=True, verbose_name='Fototessera', upload_to='fototessere/')
 
 	residenza = models.CharField(max_length=30, default='')
 	cap = models.CharField(max_length=5, default='42123')
@@ -54,7 +54,11 @@ class Iscrizione(models.Model):
 	flag_karate = models.BooleanField(default=False, verbose_name="Karate")
 	flag_corsi = models.BooleanField(default=False, verbose_name="Corsi")
 
-	modulo_da_firmare = models.FileField(blank=True, help_text="Stampare e fare firmare")
+	modulo_da_firmare = models.FileField(
+		blank=True,
+		help_text="Stampare e fare firmare",
+		upload_to='moduli_iscrizione/'
+	)
 
 	def __str__(self):
 		return "{0} {1} - {2}".format(
