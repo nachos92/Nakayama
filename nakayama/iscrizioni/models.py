@@ -6,6 +6,7 @@ from django.utils.timezone import now as django_now
 from django.contrib import admin
 from .docs import fill_pdf
 
+
 from . import utils
 
 
@@ -134,7 +135,10 @@ class Iscrizione(models.Model):
 		)
 
 		# creo il .docx
-		fill_pdf.popola_doc(data_dict, nome_file, self.get_lettera_tipo_iscrizione())
+		filepath = fill_pdf.popola_doc(data_dict, nome_file, self.get_lettera_tipo_iscrizione())
+
+		self.modulo_da_firmare = filepath
+		self.save()
 
 
 class IscrizioneKarate(Iscrizione):
