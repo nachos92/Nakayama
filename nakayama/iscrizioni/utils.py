@@ -2,8 +2,13 @@ import datetime
 from django.db import connection
 
 
-def get_current_date():
-	return datetime.datetime.now()
+def get_current_date(only_date=False, to_string=False):
+
+	valore = datetime.datetime.now().date() if only_date else datetime.datetime.now()
+	if to_string:
+		time = valore.strftime("%H:%M:%S")
+		return time
+	return valore
 
 
 def get_current_year():

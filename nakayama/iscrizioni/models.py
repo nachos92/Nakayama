@@ -1,7 +1,10 @@
+import os
+
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.timezone import now as django_now
 from django.contrib import admin
+from .docs import fill_pdf
 
 from . import utils
 
@@ -16,7 +19,7 @@ class Tesserato(models.Model):
 
 	residenza = models.CharField(max_length=30, default='')
 	cap = models.CharField(max_length=5, default='42123')
-	via = models.CharField(max_length=50, default='')
+	indirizzo = models.CharField(max_length=50, default='')
 	numero_civico = models.CharField(max_length=6, default='')
 	telefono = models.CharField(max_length=20, default='')
 
@@ -35,7 +38,32 @@ class Tesserato(models.Model):
 		verbose_name_plural = "Persone"
 
 	def __str__(self):
-		return "{0} {1}".format(self.cognome, self.nome)
+		return "{0} {1}".format(self.cognome.upper(), self.nome.upper())
+
+	def to_dict(self, uppercase=False):
+		data = {
+			'cognome_nome': '{0} {1}'.format(self.cognome, self.nome),
+			'nome': self.nome,
+			'cognome': self.cognome,
+			'residenza': self.residenza,
+			'indirizzo': self.indirizzo,
+			'cap': self.cap,
+			'numero_civico': self.numero_civico,
+			'telefono': self.telefono,
+			'citta_di_nascita': self.citta_di_nascita,
+			'data_di_nascita': self.data_di_nascita.strftime("%d/%m/%Y"),
+			'provincia_di_nascita': self.provincia_di_nascita,
+			'codice_fiscale': self.codice_fiscale,
+			'email': self.email,
+			'professione': self.professione,
+			'documento_di_riconoscimento': self.documento_di_riconoscimento,
+		}
+
+		if uppercase:
+			for key, value in data.items():
+				data[key] = value.upper()
+
+		return data
 
 
 class Iscrizione(models.Model):
@@ -60,12 +88,8 @@ class Iscrizione(models.Model):
 		upload_to='moduli_iscrizione/'
 	)
 
-	def __str__(self):
-		return "{0} {1} - {2}".format(
-			self.iscritto.cognome.upper(),
-			self.iscritto.nome.upper(),
-			self.anno_iscrizione
-		)
+	nome_file = "{cognome}_{nome}_{tipo}_{anno}.docx"
+	_tipo_iscrizione = ''
 
 	class Meta:
 		abstract = True
@@ -73,13 +97,44 @@ class Iscrizione(models.Model):
 		verbose_name_plural = "Iscrizioni"
 		unique_together = ('iscritto',)
 
+	def __str__(self):
+		return "{0} {1} - {2}".format(
+			self.iscritto.cognome.upper(),
+			self.iscritto.nome.upper(),
+			self.anno_iscrizione
+		)
+
+	def to_dict(self):
+		dati_persona = self.iscritto.to_dict(True)
+		return dati_persona
+
 	def clean(self):
 		if not (self.flag_corsi or self.flag_fitness or self.flag_karate):
 			raise ValidationError("Selezionare attività")
 
+	def get_lettera_tipo_iscrizione(self):
+		return self._tipo_iscrizione
+
 	def has_certificato_medico(self):
 		test = self.scadenza_certificato_medico < utils.get_current_date()
 		return test
+
+	def anno_iscrizione_string(self):
+		stringa = self.anno_iscrizione
+		stringa = stringa.replace('/', '_')
+		return stringa
+
+	def genera_pdf_compilato(self):
+		data_dict = self.to_dict()
+		nome_file = self.nome_file.format(
+			cognome=self.iscritto.cognome,
+			nome=self.iscritto.nome,
+			tipo=self.get_lettera_tipo_iscrizione(),
+			anno=self.anno_iscrizione_string()
+		)
+
+		# creo il .docx
+		fill_pdf.popola_doc(data_dict, nome_file, self.get_lettera_tipo_iscrizione())
 
 
 class IscrizioneKarate(Iscrizione):
@@ -99,14 +154,38 @@ class IscrizioneKarate(Iscrizione):
 	cintura_5_dan = models.CharField(max_length=50, default='', blank=True)
 	cintura_6_dan = models.CharField(max_length=50, default='', blank=True)
 
+	_tipo_iscrizione = 'K'
+
 	class Meta:
 		verbose_name = "Iscrizione Karate"
 		verbose_name_plural = "Iscrizioni Karate"
 		unique_together = ('iscritto',)
 
+	def to_dict(self):
+		data_persona = super().to_dict()
+
+		data = {
+			'cintura_bianca': self.cintura_bianca,
+			'cintura_gialla': self.cintura_gialla,
+			'cintura_arancio': self.cintura_arancio,
+			'cintura_verde': self.cintura_verde,
+			'cintura_blu': self.cintura_blu,
+			'cintura_marrone': self.cintura_marrone,
+			'cintura_1_dan': self.cintura_1_dan,
+			'cintura_2_dan': self.cintura_2_dan,
+			'cintura_3_dan': self.cintura_3_dan,
+			'cintura_4_dan': self.cintura_4_dan,
+			'cintura_5_dan': self.cintura_5_dan,
+			'cintura_6_dan': self.cintura_6_dan,
+		}
+		data.update(data_persona)
+		return data
+
 
 class IscrizioneFitness(Iscrizione):
 	flag_fitness = models.BooleanField(default=True, verbose_name="Fitness")
+
+	_tipo_iscrizione = 'F'
 
 	class Meta:
 		verbose_name = "Iscrizione Fitness"

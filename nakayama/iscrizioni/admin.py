@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.db.models import CharField
 from django.contrib.auth import models as auth_models
-from django.forms import TextInput, Textarea
-
+from django.forms import TextInput
+from . import utils
 
 from . import models
 
@@ -51,6 +51,7 @@ class TesseratoAdmin(admin.ModelAdmin):
 
 	search_fields = ['nome', 'cognome']
 	# fields = ('nome', 'cognome',)
+
 	list_filter = [
 		# null_filter('foto_tessera')
 		# 'residenza',
@@ -60,14 +61,14 @@ class TesseratoAdmin(admin.ModelAdmin):
 class IscrizioneAdmin(admin.ModelAdmin):
 	autocomplete_fields = ['iscritto']
 	search_fields = ['iscritto__nome', 'iscritto__cognome']
+
 	list_display = [
 		'iscritto',
 		'anno_iscrizione',
 		'scadenza_iscrizione',
 		'scadenza_certificato_medico',
-		'flag_karate',
-		'flag_fitness',
-		'flag_corsi',
+		'certificato_medico_valido',
+		'iscrizione_valida',
 	]
 
 	list_filter = [
@@ -81,6 +82,17 @@ class IscrizioneAdmin(admin.ModelAdmin):
 		'scadenza_iscrizione',
 		'scadenza_certificato_medico'
 	]
+
+	INNER_FIELDSETS = (None, {})
+
+	FIELD_MODULI = (
+				'Modulistica', {
+					'fields': (
+						'modulo_da_firmare',
+					)
+				}
+			),
+
 	fieldsets = (
 			(
 				None, {
@@ -95,7 +107,25 @@ class IscrizioneAdmin(admin.ModelAdmin):
 
 	def certificato_medico_salvato(self, obj):
 		return obj.has_certificato_medico()
+
+	def certificato_medico_valido(self, obj):
+		return obj.scadenza_certificato_medico >= utils.get_current_date(only_date=True)
+
+	def iscrizione_valida(self, obj):
+		return obj.scadenza_iscrizione >= utils.get_current_date(only_date=True)
+
 	certificato_medico_salvato.boolean = True
+	certificato_medico_valido.boolean = True
+	iscrizione_valida.boolean = True
+
+	def save_model(self, request, obj, form, change):
+		super().save_model(request, obj, form, change)
+		obj.genera_pdf_compilato()
+
+
+class IscrizioneFitnessAdmin(IscrizioneAdmin):
+
+	fieldsets = IscrizioneAdmin.fieldsets + IscrizioneAdmin.FIELD_MODULI
 
 
 class IscrizioneKarateAdmin(IscrizioneAdmin):
@@ -113,26 +143,12 @@ class IscrizioneKarateAdmin(IscrizioneAdmin):
 					('cintura_verde', 'cintura_2_dan', 'cintura_6_dan',),
 				)
 			}
-		),
-		(
-			'Altro', {
-				'fields': (
-					('note', 'modulo_da_firmare',),
-				)
-			}
-		),
-	)
-
-
-	def save_model(self, request, obj, form, change):
-		super(IscrizioneKarateAdmin, self).save_model(request, obj, form, change)
-
-		obj.genera_pdf_compilato()
+		),) + IscrizioneAdmin.FIELD_MODULI
 
 
 admin.site.register(models.Tesserato, TesseratoAdmin)
 admin.site.register(models.IscrizioneKarate, IscrizioneKarateAdmin)
-admin.site.register(models.IscrizioneFitness, IscrizioneAdmin)
+admin.site.register(models.IscrizioneFitness, IscrizioneFitnessAdmin)
 
 admin.site.unregister(auth_models.Group)
 admin.site.unregister(auth_models.User)
