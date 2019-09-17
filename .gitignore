@@ -1,7 +1,7 @@
-venv/*
-.idea/*
+
 nakayama/nakayama/__pycache__/*
 nakayama/iscrizioni/__pycache__/*
 nakayama/db.sqlite3
 nakayama/sqlite3.db
 nakayama/iscrizioni/migrations/*
+.idea/*
