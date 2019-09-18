@@ -58,10 +58,13 @@ class Tesserato(models.Model):
 			'email': self.email,
 			'professione': self.professione,
 			'documento_di_riconoscimento': self.documento_di_riconoscimento,
+			'fototessera': self.foto_tessera.path if self.foto_tessera else None,
 		}
 
 		if uppercase:
 			for key, value in data.items():
+				if key == 'fototessera':
+					continue
 				data[key] = value.upper()
 
 		return data
