@@ -12,8 +12,8 @@ from django.contrib.admin import SimpleListFilter
 class NullListFilter(SimpleListFilter):
 	def lookups(self, request, model_admin):
 		return (
-			('1', 'Null', ),
-			('0', '!= Null', ),
+			('1', 'NO', ),
+			('0', 'SI', ),
 		)
 
 	def queryset(self, request, queryset):
@@ -26,6 +26,38 @@ class NullListFilter(SimpleListFilter):
 class StartNullListFilter(NullListFilter):
 	title = u'Started'
 	parameter_name = u'started'
+
+
+class FiltroCertificatoMedico(SimpleListFilter):
+	title = "certificato medico"
+	parameter_name = 'certificato medico'
+
+	def lookups(self, request, model_admin):
+		return ('Yes', 'VALIDI'), ('No', 'SCADUTI'),
+
+	def queryset(self, request, queryset):
+		value = self.value()
+		if value == 'Yes':
+			return queryset.filter(scadenza_certificato_medico__gte=utils.get_current_date(only_date=True))
+		elif value == 'No':
+			return queryset.filter(scadenza_certificato_medico__lt=utils.get_current_date(only_date=True))
+		return queryset
+
+
+class FiltroAbbonamento(SimpleListFilter):
+	title = "scadenza abbonamento"
+	parameter_name = 'scadenza abbonamento'
+
+	def lookups(self, request, model_admin):
+		return ('Yes', 'VALIDI'), ('No', 'SCADUTI'),
+
+	def queryset(self, request, queryset):
+		value = self.value()
+		if value == 'Yes':
+			return queryset.filter(scadenza_iscrizione__gte=utils.get_current_date(only_date=True))
+		elif value == 'No':
+			return queryset.filter(scadenza_iscrizione__lt=utils.get_current_date(only_date=True))
+		return queryset
 
 
 def null_filter(field, title_=None):
@@ -68,11 +100,13 @@ class IscrizioneAdmin(admin.ModelAdmin):
 		'scadenza_iscrizione',
 		'scadenza_certificato_medico',
 		'certificato_medico_valido',
-		'iscrizione_valida',
+		'abbonamento_valido',
 	]
 
 	list_filter = [
 		'anno_iscrizione',
+		FiltroCertificatoMedico,
+		FiltroAbbonamento,
 	]
 
 	sortable_by = [
@@ -80,7 +114,7 @@ class IscrizioneAdmin(admin.ModelAdmin):
 		'anno_iscrizione',
 		'data_iscrizione',
 		'scadenza_iscrizione',
-		'scadenza_certificato_medico'
+		'scadenza_certificato_medico',
 	]
 
 	INNER_FIELDSETS = (None, {})
@@ -104,19 +138,6 @@ class IscrizioneAdmin(admin.ModelAdmin):
 				}
 			),
 	)
-
-	def certificato_medico_salvato(self, obj):
-		return obj.has_certificato_medico()
-
-	def certificato_medico_valido(self, obj):
-		return obj.scadenza_certificato_medico >= utils.get_current_date(only_date=True)
-
-	def iscrizione_valida(self, obj):
-		return obj.scadenza_iscrizione >= utils.get_current_date(only_date=True)
-
-	certificato_medico_salvato.boolean = True
-	certificato_medico_valido.boolean = True
-	iscrizione_valida.boolean = True
 
 	def save_model(self, request, obj, form, change):
 		super().save_model(request, obj, form, change)

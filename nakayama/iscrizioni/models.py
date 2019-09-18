@@ -72,7 +72,7 @@ class Iscrizione(models.Model):
 	# id = models.AutoField(primary_key=True)
 	iscritto = models.ForeignKey(Tesserato, on_delete=models.CASCADE)
 	data_iscrizione = models.DateField(default=django_now)
-	scadenza_iscrizione = models.DateField(blank=False, default=django_now)
+	scadenza_iscrizione = models.DateField(blank=False, default=django_now, verbose_name='Scadenza abbonamento')
 	anno_iscrizione = models.CharField(max_length=9, default=utils.get_anno_scolastico())
 
 	scadenza_certificato_medico = models.DateField(default=django_now)
@@ -139,6 +139,15 @@ class Iscrizione(models.Model):
 
 		self.modulo_da_firmare = filepath
 		self.save()
+
+	def certificato_medico_valido(self):
+		return self.scadenza_certificato_medico >= utils.get_current_date(only_date=True)
+
+	def abbonamento_valido(self):
+		return self.scadenza_iscrizione >= utils.get_current_date(only_date=True)
+
+	abbonamento_valido.boolean = True
+	certificato_medico_valido.boolean = True
 
 
 class IscrizioneKarate(Iscrizione):
