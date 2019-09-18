@@ -8,12 +8,12 @@ IS_PROD = False
 
 
 def popola_doc(data_dict, filename, tipo_iscrizione):
-	output_file_path = 'docs/{filename}'.format(**locals())
+	output_file_path = 'docs/modulistica/{filename}'.format(**locals())
 
 	if tipo_iscrizione == 'F':
-		INVOICE_TEMPLATE_PATH = settings.MEDIA_ROOT + 'docs/template_fitness.docx'
+		INVOICE_TEMPLATE_PATH = settings.MEDIA_ROOT + 'docs/base/template_fitness.docx'
 	else:
-		INVOICE_TEMPLATE_PATH = settings.MEDIA_ROOT + 'docs/template_karate.docx'
+		INVOICE_TEMPLATE_PATH = settings.MEDIA_ROOT + 'docs/base/template_karate.docx'
 
 	INVOICE_OUTPUT_PATH = settings.MEDIA_ROOT + output_file_path
 
