@@ -1,7 +1,13 @@
 
-nakayama/nakayama/__pycache__/*
-nakayama/iscrizioni/__pycache__/*
-nakayama/db.sqlite3
-nakayama/sqlite3.db
+nakayama/nakayama/__pycache__
+nakayama/iscrizioni/__pycache__
+db.sqlite3
+sqlite3.db
 nakayama/iscrizioni/migrations/*
-.idea/*
+.idea/
+nakayama/media/fototessere/
+
+
+# Python # 
+*.py[cod] 
+*$py.class 
