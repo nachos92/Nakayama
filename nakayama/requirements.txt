@@ -1,0 +1,15 @@
+Django==2.1.11
+docx-mailmerge==0.4.0
+docxtpl==0.6.3
+Jinja2==2.10.1
+lxml==4.4.1
+MarkupSafe==1.1.1
+mysql-connector-python==8.0.17
+mysqlclient==1.4.4
+pdfrw==0.4
+Pillow==6.1.0
+protobuf==3.9.1
+pypdftk==0.4
+python-docx==0.8.7
+pytz==2019.2
+six==1.12.0

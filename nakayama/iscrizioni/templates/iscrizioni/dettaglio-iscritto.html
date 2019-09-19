@@ -1,0 +1,19 @@
+{% extends 'iscrizioni/base.html' %}
+
+{% block content %}
+<!--TODO: Fare il template base in modo da non importare bootstrap tutte le volte -->
+{% if iscritto %}
+    <div class="row">
+        <div class="col">
+            {{iscritto.persona.cognome}}
+        </div>
+        <div class="col">
+            {{iscritto.persona.nome}}
+        </div>
+    </div>
+
+{% else %}
+    <p>Non ci sono iscritti.</p>
+{% endif %}
+
+{% endblock %}

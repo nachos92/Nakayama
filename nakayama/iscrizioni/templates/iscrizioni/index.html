@@ -1,0 +1,35 @@
+{% extends 'iscrizioni/base.html' %}
+
+{% block content %}
+    {% if lista_iscritti %}
+        <table class="table">
+            <tr>
+                <th></th>
+                <th>Cognome</th>
+                <th>Nome</th>
+            </tr>
+            {% for iscritto in lista_iscritti %}
+            <tr>
+                <td><a href="/iscrizioni/iscritto/{{iscritto.id}}/">-></a></td>
+                <td>{{iscritto.persona.cognome}}</td>
+                <td>{{iscritto.persona.nome}}</td>
+            </tr>
+    <!--    <div class="row">-->
+    <!--        <div class="col">-->
+    <!--            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>-->
+
+    <!--            <a href="/iscrizioni/iscritto/{{iscritto.id}}/">vai</a>-->
+    <!--        </div>-->
+    <!--        <div class="col">-->
+    <!--            {{iscritto.persona.cognome}}-->
+    <!--        </div>-->
+    <!--        <div class="col">-->
+    <!--            {{iscritto.persona.nome}}-->
+    <!--        </div>-->
+    <!--    </div>-->
+        {% endfor %}
+        </table>
+    {% else %}
+        <p>Non ci sono iscritti.</p>
+    {% endif %}
+{% endblock%}
