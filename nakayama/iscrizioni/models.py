@@ -62,9 +62,11 @@ class Tesserato(models.Model):
 		}
 
 		if uppercase:
+			campi_da_non_toccare = ['fototessera', 'email']
 			for key, value in data.items():
-				if key == 'fototessera':
+				if key in campi_da_non_toccare:
 					continue
+
 				data[key] = value.upper()
 
 		return data
