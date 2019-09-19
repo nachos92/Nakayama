@@ -3,11 +3,14 @@ nakayama/nakayama/__pycache__
 nakayama/iscrizioni/__pycache__
 db.sqlite3
 sqlite3.db
+nakayama/db.sqlite3
 nakayama/iscrizioni/migrations/*
-.idea/
+.idea/misc.xml
 nakayama/media/fototessere/
-
+venv
 
 # Python # 
 *.py[cod] 
 *$py.class 
+workspace.xml
+.dat.nosynca308.sevaxO
