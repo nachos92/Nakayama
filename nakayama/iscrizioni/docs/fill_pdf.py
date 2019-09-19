@@ -7,10 +7,15 @@ from docx.shared import Mm, Inches, Pt
 import jinja2
 
 
-IS_PROD = False
-
-
 def popola_doc(data_dict, filename, tipo_iscrizione):
+	""" Abbina ai tag del template i valori passati in ingresso
+
+	:param data_dict: bindings nome_tag -> valore
+	:param filename: nome+estensione del file (.docx)
+	:param tipo_iscrizione: Karate/Fitness (K/F)
+	:return:
+	"""
+
 	output_file_path = 'docs/modulistica/{filename}'.format(**locals())
 	INVOICE_OUTPUT_PATH = settings.MEDIA_ROOT + output_file_path
 

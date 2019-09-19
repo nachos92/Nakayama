@@ -3,7 +3,8 @@ import os
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.timezone import now as django_now
-from django.contrib import admin
+from .validators import validate_file_size
+
 from .docs import fill_pdf
 
 
@@ -16,7 +17,11 @@ class Tesserato(models.Model):
 	nome = models.CharField(max_length=30, default='')
 	cognome = models.CharField(max_length=30, default='')
 
-	foto_tessera = models.ImageField(blank=True, verbose_name='Fototessera', upload_to='fototessere/')
+	foto_tessera = models.ImageField(
+		blank=True, verbose_name='Fototessera',
+		upload_to='fototessere/',
+		validators=[validate_file_size]
+	)
 
 	residenza = models.CharField(max_length=30, default='')
 	cap = models.CharField(max_length=5, default='42123')
