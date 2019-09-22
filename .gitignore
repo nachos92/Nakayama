@@ -1,13 +1,15 @@
 
 nakayama/nakayama/__pycache__
 nakayama/iscrizioni/__pycache__
-db.sqlite3
-sqlite3.db
+*sqlite3
+*db
+db*
 nakayama/db.sqlite3
 nakayama/iscrizioni/migrations/*
 .idea/misc.xml
 nakayama/media/fototessere/
 venv
+env
 
 # Python # 
 *.py[cod] 
