@@ -102,11 +102,15 @@ class Iscrizione(models.Model):
 	nome_file = "{cognome}_{nome}_{tipo}_{anno}.docx"
 	_tipo_iscrizione = ''
 
+	def get_name(self):
+		return "Ciao"
+
 	class Meta:
 		abstract = True
 		verbose_name = "Iscrizione"
 		verbose_name_plural = "Iscrizioni"
 		unique_together = ('iscritto',)
+		ordering = ('iscritto__cognome',)
 
 	def __str__(self):
 		return "{0} {1} - {2}".format(
