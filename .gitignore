@@ -1,8 +1,8 @@
 
 nakayama/nakayama/__pycache__
 nakayama/iscrizioni/__pycache__
-db.sqlite3
-sqlite3.db
+*.sqlite3
+*.db
 nakayama/db.sqlite3
 nakayama/iscrizioni/migrations/*
 .idea/misc.xml
@@ -14,3 +14,4 @@ venv
 *$py.class 
 workspace.xml
 .dat.nosynca308.sevaxO
+Nakayama.iml
