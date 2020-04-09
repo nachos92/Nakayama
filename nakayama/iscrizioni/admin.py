@@ -95,7 +95,7 @@ class IscrizioneAdmin(admin.ModelAdmin):
 	search_fields = ['iscritto__nome', 'iscritto__cognome']
 
 	list_display = [
-		'iscritto',
+		'tesserato',
 		'anno_iscrizione',
 		'scadenza_iscrizione',
 		'scadenza_certificato_medico',
@@ -110,7 +110,7 @@ class IscrizioneAdmin(admin.ModelAdmin):
 	]
 
 	sortable_by = [
-		'iscritto',
+		'tesserato',
 		'anno_iscrizione',
 		'data_iscrizione',
 		'scadenza_iscrizione',
@@ -142,6 +142,11 @@ class IscrizioneAdmin(admin.ModelAdmin):
 	def save_model(self, request, obj, form, change):
 		super().save_model(request, obj, form, change)
 		obj.genera_pdf_compilato()
+
+	def tesserato(self, obj):
+		return "{0} {1}".format(obj.iscritto.cognome, obj.iscritto.nome)
+
+	tesserato.admin_order_field = 'iscritto__cognome'
 
 
 class IscrizioneFitnessAdmin(IscrizioneAdmin):
